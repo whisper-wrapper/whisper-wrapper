@@ -1,0 +1,11 @@
+PyQt6>=6.10.1,<7.0
+faster-whisper>=1.2.1,<2.0
+sounddevice>=0.5.3,<0.6
+numpy>=2.3.5,<3.0
+pynput>=1.8.1,<2.0
+pyperclip>=1.11.0,<2.0
+webrtcvad>=2.0.10
+
+# GPU support (optional, but included for self-contained package)
+nvidia-cudnn-cu12>=9.0
+nvidia-cublas-cu12>=12.0

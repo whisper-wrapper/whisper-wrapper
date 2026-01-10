@@ -1,0 +1,26 @@
+THIRD_PARTY_LICENSES
+
+This file summarizes third-party components with distribution implications for
+binary builds (PyInstaller/DEB). It is not legal advice.
+
+Bundled in PyInstaller builds:
+
+- PyQt6 (GPL-3.0-only or commercial). This project is GPL-3.0-or-later; keep
+  GPL notices and provide source for GPL distribution. Commercial distribution
+  of PyQt6 requires a commercial license from Riverbank.
+- PyQt6-Qt6 (LGPL-3.0-only). Redistributing Qt libraries requires compliance
+  with LGPL terms (e.g., allow replacement/relinking of the LGPL parts and
+  provide the license text).
+- faster-whisper (MIT). Include the MIT license text.
+- NVIDIA CUDA runtime wheels: nvidia-cublas-cu12, nvidia-cudnn-cu12
+  (LicenseRef-NVIDIA-Proprietary). Redistribution may be restricted; review
+  NVIDIA's license and consider CPU-only builds if you cannot comply.
+
+System dependencies (not bundled in the DEB; installed via distro packages):
+
+- FFmpeg. Licensing depends on build options; Debian builds are GPL v2+ and
+  some variants become GPL v3+ when linked with Apache-2.0 libraries. If you
+  bundle FFmpeg, comply with the license of the specific build.
+- PortAudio (MIT-style license). Debian's libportaudio2 package is MIT.
+
+This list is focused on high-impact components and is not exhaustive.

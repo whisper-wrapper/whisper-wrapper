@@ -1,0 +1,31 @@
+# Byte-compiled / cache
+__pycache__/
+src/__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE / tooling
+.idea/
+.vscode/
+.DS_Store
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Packaging / logs / coverage
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+logs/
+
+# Local settings
+.claude/

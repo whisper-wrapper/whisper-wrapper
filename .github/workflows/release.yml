@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-venv portaudio19-dev ffmpeg libxcb-cursor0
+      - name: Build DEB (amd64)
+        run: ARCH=amd64 ./build_deb.sh
+      - name: Upload artifact (amd64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-amd64
+          path: dist/*.deb
+
+  build-arm64:
+    if: ${{ vars.ENABLE_ARM64 == 'true' }}
+    runs-on: ubuntu-24.04-arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-venv portaudio19-dev ffmpeg libxcb-cursor0
+      - name: Build DEB (arm64)
+        run: ARCH=arm64 ./build_deb.sh
+      - name: Upload artifact (arm64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-arm64
+          path: dist/*.deb
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-amd64, build-arm64]
+    if: ${{ needs.build-amd64.result == 'success' }}
+    steps:
+      - name: Download amd64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-amd64
+          path: dist
+      - name: Download arm64 artifacts
+        if: ${{ needs.build-arm64.result == 'success' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-arm64
+          path: dist
+      - name: Create GitHub release and upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*.deb
