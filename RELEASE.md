@@ -28,5 +28,5 @@
   ensure an ARM64 runner is available (or update the workflow `runs-on`).
 
 ## Notes
-- CPU-only installs use `requirements-cpu.txt`.
-- GPU builds include NVIDIA CUDA wheels from `requirements.txt`.
+- Builds include NVIDIA CUDA wheels from `requirements.txt`.
+- CPU/GPU selection is runtime-configurable in the app settings.

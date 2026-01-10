@@ -11,7 +11,7 @@ Lightweight tray app for voice-to-text on Linux using faster-whisper. Works on X
 
 ## System Requirements
 - Currently tested only on Debian-based distributions.
-- Python 3.10+
+- Python 3.11+
 - `portaudio19-dev`, `ffmpeg`, `libxcb-cursor0`
 - (Optional GPU) NVIDIA driver + CUDA 12 compatible stack
 
@@ -20,10 +20,9 @@ Lightweight tray app for voice-to-text on Linux using faster-whisper. Works on X
 python3 -m venv .venv && source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt  # includes NVIDIA CUDA runtime wheels
-# CPU-only (no NVIDIA wheels):
-# pip install -r requirements-cpu.txt
 python -m src.app
 ```
+CPU mode is available in settings even with GPU dependencies installed.
 
 ## Models, Sources, and Privacy
 - Models are downloaded on demand by `faster-whisper` and cached under `~/.cache/whisper-wrapper/models/`.
@@ -44,7 +43,7 @@ python -m src.app
 - This repository is GPL-3.0-or-later; dependencies have their own licenses.
 - PyQt6 is GPL/commercial; this project uses the GPL option to remain compatible.
 - NVIDIA CUDA runtime wheels (`nvidia-cudnn-cu12`, `nvidia-cublas-cu12`) are proprietary; redistribution may be restricted by NVIDIA terms.
-- For easier redistribution, prefer CPU-only installs or make GPU deps optional for end users.
+- Default builds include NVIDIA CUDA wheels; review redistribution terms before shipping binaries.
 
 ## License Compatibility Decision
 - Project is GPL-3.0-or-later to align with PyQt6's GPL licensing.

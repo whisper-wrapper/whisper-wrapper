@@ -7,7 +7,7 @@ name = "whisper-wrapper"
 version = "1.0.0"
 description = "Lightweight tray app for voice-to-text on Linux using faster-whisper."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = {file = "LICENSE"}
 authors = [{name = "Whisper Wrapper Contributors"}]
 keywords = ["whisper", "speech-to-text", "transcription", "linux", "tray"]
@@ -34,11 +34,11 @@ include = ["src*"]
 
 [tool.black]
 line-length = 88
-target-version = ["py310"]
+target-version = ["py311"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 exclude = ["venv", ".venv", "build", "dist", ".idea", "__pycache__"]
 
 [tool.ruff.lint]
@@ -46,7 +46,7 @@ select = ["E", "F"]
 ignore = ["E501"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 warn_unused_ignores = true
 show_error_codes = true
 pretty = true

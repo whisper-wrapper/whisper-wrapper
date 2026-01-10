@@ -14,7 +14,7 @@ Bundled in PyInstaller builds:
 - faster-whisper (MIT). Include the MIT license text.
 - NVIDIA CUDA runtime wheels: nvidia-cublas-cu12, nvidia-cudnn-cu12
   (LicenseRef-NVIDIA-Proprietary). Redistribution may be restricted; review
-  NVIDIA's license and consider CPU-only builds if you cannot comply.
+  NVIDIA's license before shipping GPU-enabled binaries.
 
 System dependencies (not bundled in the DEB; installed via distro packages):
 
