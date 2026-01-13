@@ -33,6 +33,7 @@ jobs:
           path: dist/*.deb
 
   build-arm64:
+    needs: [ci]
     if: ${{ vars.ENABLE_ARM64 == 'true' }}
     runs-on: ubuntu-24.04-arm64
     steps:
