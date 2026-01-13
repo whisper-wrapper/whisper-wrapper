@@ -91,6 +91,8 @@ class ModelLoadWorker(QThread):
                 device=self.device,
                 progress_callback=lambda s, p: self.progress_signal.emit(s, p),
             )
-            self.finished_signal.emit(bool(success), "" if success else "Model load failed")
+            self.finished_signal.emit(
+                bool(success), "" if success else "Model load failed"
+            )
         except Exception as e:
             self.finished_signal.emit(False, str(e))

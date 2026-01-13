@@ -1,4 +1,5 @@
 """Overlay state definitions."""
+
 from enum import Enum, auto
 
 

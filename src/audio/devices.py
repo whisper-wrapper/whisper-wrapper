@@ -12,6 +12,7 @@ def list_devices() -> List[dict]:
     """List available audio input devices."""
     try:
         import sounddevice as sd
+
         devices = sd.query_devices()
         inputs = []
         for i, dev in enumerate(devices):
@@ -34,6 +35,7 @@ def get_default_device() -> Optional[int]:
     """Get default input device index."""
     try:
         import sounddevice as sd
+
         return sd.default.device[0]
     except Exception:
         return None

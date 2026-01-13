@@ -3,10 +3,10 @@
 import fcntl
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TextIO
 
 
-def acquire_lock(lock_file: Path) -> Optional[object]:
+def acquire_lock(lock_file: Path) -> Optional[TextIO]:
     try:
         lock = open(lock_file, "w")
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -17,7 +17,7 @@ def acquire_lock(lock_file: Path) -> Optional[object]:
         return None
 
 
-def release_lock(lock: Optional[object], lock_file: Path):
+def release_lock(lock: Optional[TextIO], lock_file: Path):
     if lock:
         try:
             fcntl.flock(lock.fileno(), fcntl.LOCK_UN)

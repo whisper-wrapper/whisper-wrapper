@@ -1,7 +1,5 @@
 """Voice Activity Detection utilities."""
 
-from typing import Optional
-
 from ..config import SAMPLE_RATE
 from ..logging_utils import get_logger
 
@@ -20,6 +18,7 @@ class VADProcessor:
         """Initialize webrtcvad."""
         try:
             import webrtcvad
+
             self._vad = webrtcvad.Vad(self._aggressiveness)
             logger.info(f"VAD initialized (aggressiveness={self._aggressiveness})")
         except ImportError:

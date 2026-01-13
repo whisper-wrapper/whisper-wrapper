@@ -87,6 +87,7 @@ class HotkeyManager:
                 if cancel_hotkey and self._on_cancel:
                     cancel_key = self._parse_single_key(cancel_hotkey)
                     if cancel_key:
+
                         def on_press(key):
                             if key == cancel_key:
                                 self._on_cancel()
@@ -123,9 +124,18 @@ class HotkeyManager:
                 "tab": Key.tab,
                 "backspace": Key.backspace,
                 "delete": Key.delete,
-                "f1": Key.f1, "f2": Key.f2, "f3": Key.f3, "f4": Key.f4,
-                "f5": Key.f5, "f6": Key.f6, "f7": Key.f7, "f8": Key.f8,
-                "f9": Key.f9, "f10": Key.f10, "f11": Key.f11, "f12": Key.f12,
+                "f1": Key.f1,
+                "f2": Key.f2,
+                "f3": Key.f3,
+                "f4": Key.f4,
+                "f5": Key.f5,
+                "f6": Key.f6,
+                "f7": Key.f7,
+                "f8": Key.f8,
+                "f9": Key.f9,
+                "f10": Key.f10,
+                "f11": Key.f11,
+                "f12": Key.f12,
             }
 
             return key_map.get(key_str)

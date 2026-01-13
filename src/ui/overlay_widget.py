@@ -1,13 +1,28 @@
 """Overlay widget showing status and progress."""
+
 from typing import Optional, Callable
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QColor, QPainter, QBrush, QFont, QCursor
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QProgressBar, QTextEdit, QHBoxLayout, QPushButton, QCheckBox, QSizeGrip
+from PyQt6.QtGui import QPainter, QBrush, QFont, QCursor
+from PyQt6.QtWidgets import (
+    QWidget,
+    QApplication,
+    QLabel,
+    QVBoxLayout,
+    QProgressBar,
+    QTextEdit,
+    QHBoxLayout,
+    QPushButton,
+    QCheckBox,
+    QSizeGrip,
+)
 from ..logging_utils import get_logger
 from .icons import make_record_icon
 from .themes import get_overlay_palette
 from .overlay_state import OverlayState, STATE_LABELS
+
 logger = get_logger("ui.overlay")
+
+
 class StatusOverlay(QWidget):
     state_changed = pyqtSignal(OverlayState)
 
@@ -61,7 +76,9 @@ class StatusOverlay(QWidget):
         self._text_view.setReadOnly(False)
         self._text_view.setMinimumHeight(140)
         self._text_view.setMaximumHeight(300)
-        self._text_view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self._text_view.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
         layout.addWidget(self._text_view)
         self._progress_bar = QProgressBar()
         self._progress_bar.setRange(0, 100)
@@ -79,10 +96,18 @@ class StatusOverlay(QWidget):
         self._stats_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self._stats_label)
         actions = QHBoxLayout()
-        self._record_btn = self._make_action_button("Record", lambda: self._on_toggle and self._on_toggle())
-        self._copy_btn = self._make_action_button("Copy", lambda: self._on_copy and self._on_copy())
-        self._paste_btn = self._make_action_button("Paste", lambda: self._on_paste and self._on_paste())
-        self._hide_btn = self._make_action_button("Hide", lambda: self._on_hide and self._on_hide())
+        self._record_btn = self._make_action_button(
+            "Record", lambda: self._on_toggle and self._on_toggle()
+        )
+        self._copy_btn = self._make_action_button(
+            "Copy", lambda: self._on_copy and self._on_copy()
+        )
+        self._paste_btn = self._make_action_button(
+            "Paste", lambda: self._on_paste and self._on_paste()
+        )
+        self._hide_btn = self._make_action_button(
+            "Hide", lambda: self._on_hide and self._on_hide()
+        )
         actions.addStretch()
         actions.addWidget(self._record_btn)
         actions.addWidget(self._copy_btn)
@@ -91,7 +116,8 @@ class StatusOverlay(QWidget):
         self._auto_paste_box = QCheckBox("Auto paste")
         self._auto_paste_box.setChecked(True)
         self._auto_paste_box.stateChanged.connect(
-            lambda s: self._on_auto_paste_change and self._on_auto_paste_change(s == Qt.CheckState.Checked)
+            lambda s: self._on_auto_paste_change
+            and self._on_auto_paste_change(s == Qt.CheckState.Checked)
         )
         actions.addWidget(self._auto_paste_box)
         actions.addStretch()
@@ -109,6 +135,7 @@ class StatusOverlay(QWidget):
         grip_container = QWidget()
         grip_container.setLayout(grip_row)
         layout.addWidget(grip_container)
+
     def _reposition(self):
         screen = QApplication.primaryScreen()
         if screen:
@@ -131,8 +158,12 @@ class StatusOverlay(QWidget):
         self._colors = get_overlay_palette(theme)
         self._bg_color = self._colors["bg"]
         self._label.setStyleSheet(f"color: {self._colors['text']};")
-        self._status_detail.setStyleSheet(f"color: {self._colors['muted']}; font-size: 11px;")
-        self._text_view.setStyleSheet(f"QTextEdit {{ background: transparent; color: {self._colors['text']}; border: none; }}")
+        self._status_detail.setStyleSheet(
+            f"color: {self._colors['muted']}; font-size: 11px;"
+        )
+        self._text_view.setStyleSheet(
+            f"QTextEdit {{ background: transparent; color: {self._colors['text']}; border: none; }}"
+        )
         self._progress_bar.setStyleSheet(
             f"QProgressBar{{background-color:{self._colors['bar_bg']};border-radius:4px;}}"
             f"QProgressBar::chunk{{background-color:{self._colors['accent']};border-radius:4px;}}"
@@ -141,7 +172,9 @@ class StatusOverlay(QWidget):
             f"QProgressBar{{background-color:{self._colors['level_bg']};border-radius:2px;}}"
             f"QProgressBar::chunk{{background-color:{self._colors['accent']};border-radius:2px;}}"
         )
-        self._stats_label.setStyleSheet(f"color: {self._colors['muted']}; font-size: 10px;")
+        self._stats_label.setStyleSheet(
+            f"color: {self._colors['muted']}; font-size: 10px;"
+        )
         btn_style = (
             f"QPushButton{{color:{self._colors['text']};background:transparent;border:1px solid {self._colors['bar_bg']};"
             f"border-radius:6px;padding:4px 10px;}}QPushButton:hover{{background:{self._colors['bar_bg']};}}"
@@ -176,20 +209,38 @@ class StatusOverlay(QWidget):
         self._audio_level = max(0, min(1, level))
         scaled = min(100, int(self._audio_level * 500))
         self._level_bar.setValue(scaled)
-    def show_temporary(self, state: OverlayState, message: Optional[str] = None, duration_ms: int = 2000):
-        self.set_state(state, message); QTimer.singleShot(duration_ms, lambda: self.set_state(OverlayState.IDLE))
+
+    def show_temporary(
+        self,
+        state: OverlayState,
+        message: Optional[str] = None,
+        duration_ms: int = 2000,
+    ):
+        self.set_state(state, message)
+        QTimer.singleShot(duration_ms, lambda: self.set_state(OverlayState.IDLE))
 
     def set_text(self, text: str):
         self._text_view.setPlainText(text)
-        self._text_view.verticalScrollBar().setValue(self._text_view.verticalScrollBar().maximum())
+        self._text_view.verticalScrollBar().setValue(
+            self._text_view.verticalScrollBar().maximum()
+        )
         self.adjustSize()
         if not self._user_positioned:
             self._reposition()
 
-    def set_hints(self, hints: str): pass
-    def set_opacity(self, opacity: float): self._opacity = max(0.1, min(1.0, opacity)); self.setWindowOpacity(self._opacity)
-    def set_status_detail(self, detail: str): self._status_detail.setText(detail)
-    def set_stats(self, stats: str): self._stats_label.setText(stats)
+    def set_hints(self, hints: str):
+        pass
+
+    def set_opacity(self, opacity: float):
+        self._opacity = max(0.1, min(1.0, opacity))
+        self.setWindowOpacity(self._opacity)
+
+    def set_status_detail(self, detail: str):
+        self._status_detail.setText(detail)
+
+    def set_stats(self, stats: str):
+        self._stats_label.setText(stats)
+
     def set_actions(
         self,
         on_copy: Optional[Callable[[], None]] = None,
@@ -205,7 +256,9 @@ class StatusOverlay(QWidget):
         self._on_toggle = on_toggle
 
     def set_auto_paste(self, enabled: bool):
-        self._auto_paste_box.blockSignals(True); self._auto_paste_box.setChecked(bool(enabled)); self._auto_paste_box.blockSignals(False)
+        self._auto_paste_box.blockSignals(True)
+        self._auto_paste_box.setChecked(bool(enabled))
+        self._auto_paste_box.blockSignals(False)
 
     def set_recording_state(self, recording: bool):
         self._is_recording = recording
@@ -219,7 +272,9 @@ class StatusOverlay(QWidget):
         self._record_btn.setStyleSheet(style)
         self._record_btn.setIcon(make_record_icon(base))
 
-    def _make_action_button(self, label: str, handler: Callable[[], None]) -> QPushButton:
+    def _make_action_button(
+        self, label: str, handler: Callable[[], None]
+    ) -> QPushButton:
         btn = QPushButton(label)
         btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -229,18 +284,23 @@ class StatusOverlay(QWidget):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            self._drag_pos = (
+                event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            )
             event.accept()
         super().mousePressEvent(event)
+
     def mouseMoveEvent(self, event):
         if event.buttons() & Qt.MouseButton.LeftButton and self._drag_pos is not None:
             self._user_positioned = True
             self.move(event.globalPosition().toPoint() - self._drag_pos)
             event.accept()
         super().mouseMoveEvent(event)
+
     def resizeEvent(self, event):
         self._user_positioned = True
         super().resizeEvent(event)
+
     def hide_overlay(self):
         self._state = OverlayState.HIDDEN
         self.hide()

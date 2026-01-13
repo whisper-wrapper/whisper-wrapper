@@ -53,10 +53,14 @@ class UiActionsMixin:
     def _start_model_load(self, model: str):
         self._cleanup_model_worker()
         cached = is_model_cached(model)
-        overlay_manager.show_downloading(0, model, status="loading_cached" if cached else "loading")
+        overlay_manager.show_downloading(
+            0, model, status="loading_cached" if cached else "loading"
+        )
         worker = ModelLoadWorker(model, config.settings.device, parent=self)
         worker.progress_signal.connect(
-            lambda status, percent: overlay_manager.show_downloading(percent, model, status=status)
+            lambda status, percent: overlay_manager.show_downloading(
+                percent, model, status=status
+            )
         )
         worker.finished_signal.connect(self._on_model_load_finished)
         worker.start()

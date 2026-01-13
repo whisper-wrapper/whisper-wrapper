@@ -18,7 +18,7 @@ def open_stream_with_fallback(
 
     Returns (stream, used_device) or None.
     """
-    devices_to_try = [device] if device is not None else [None]
+    devices_to_try: list[Optional[int]] = [device] if device is not None else [None]
     if device is not None:
         devices_to_try.append(None)
 

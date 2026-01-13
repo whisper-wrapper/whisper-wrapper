@@ -54,5 +54,10 @@ ignore_missing_imports = true
 files = ["src", "trigger.py"]
 exclude = "(venv|\\.venv|build|dist|\\.idea|__pycache__)"
 
+[[tool.mypy.overrides]]
+module = ["src.app.recording", "src.app.actions"]
+disable_error_code = ["attr-defined", "arg-type"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]

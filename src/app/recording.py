@@ -28,7 +28,9 @@ class RecordingMixin:
         worker.finished.connect(self._on_realtime_worker_finished)
         worker.start()
         self._realtime_worker = worker
-        logger.debug(f"Realtime transcription started for {len(audio_data)/16000:.1f}s chunk")
+        logger.debug(
+            f"Realtime transcription started for {len(audio_data)/16000:.1f}s chunk"
+        )
 
     def _on_realtime_partial(self, text: str):
         if self._recording:
@@ -71,7 +73,9 @@ class RecordingMixin:
             self._update_toggle_action()
             if self._tray:
                 self._tray.set_recording_indicator(False)
-            overlay_manager.set_status_detail(f"Model: {config.settings.model_size} | Cancelled")
+            overlay_manager.set_status_detail(
+                f"Model: {config.settings.model_size} | Cancelled"
+            )
             overlay_manager.set_stats("")
             logger.info("Recording cancelled")
         else:
@@ -85,7 +89,7 @@ class RecordingMixin:
         if self._recording:
             return
         recorder.set_callbacks(
-            on_audio_level=lambda l: self.audio_level_signal.emit(l),
+            on_audio_level=lambda level: self.audio_level_signal.emit(level),
             on_silence_timeout=lambda: self.silence_timeout_signal.emit(),
             on_audio_chunk=lambda a: self.audio_chunk_signal.emit(a),
         )
@@ -97,7 +101,9 @@ class RecordingMixin:
             overlay_manager.set_recording_state(True)
             overlay_manager.show_recording()
             self._last_duration = 0.0
-            overlay_manager.set_status_detail(f"Model: {config.settings.model_size} | Recording (Esc to cancel)")
+            overlay_manager.set_status_detail(
+                f"Model: {config.settings.model_size} | Recording (Esc to cancel)"
+            )
             overlay_manager.set_stats("Listening... (Esc to cancel)")
             overlay_manager.set_hints("")
             logger.info("Recording started")
@@ -130,7 +136,9 @@ class RecordingMixin:
         self._last_duration = clip_duration
         overlay_manager.set_hints("")
         device = transcriber.current_device or config.settings.device
-        overlay_manager.set_status_detail(f"Model: {config.settings.model_size} | Transcribing")
+        overlay_manager.set_status_detail(
+            f"Model: {config.settings.model_size} | Transcribing"
+        )
         overlay_manager.set_stats(f"Clip: {clip_duration:.1f}s | Device: {device}")
         logger.debug(f"Processing audio: {len(audio)} samples ({clip_duration:.2f}s)")
         worker = TranscriptionWorker(audio, parent=self)
@@ -152,12 +160,23 @@ class RecordingMixin:
 
     def _on_transcription_progress(self, status: str, percent: float):
         if status in ("downloading", "loading", "initializing", "loading_cached"):
-            overlay_manager.set_status_detail(f"Model: {config.settings.model_size} | Preparing")
-            overlay_manager.show_downloading(percent, config.settings.model_size, status=status)
+            overlay_manager.set_status_detail(
+                f"Model: {config.settings.model_size} | Preparing"
+            )
+            overlay_manager.show_downloading(
+                percent, config.settings.model_size, status=status
+            )
         elif status == "fallback_cpu":
-            overlay_manager.show_downloading(percent, config.settings.model_size, status=status)
+            overlay_manager.show_downloading(
+                percent, config.settings.model_size, status=status
+            )
             if self._tray:
-                self._tray.notify(APP_NAME, "GPU not available, using CPU", QSystemTrayIcon.MessageIcon.Warning, 2000)
+                self._tray.notify(
+                    APP_NAME,
+                    "GPU not available, using CPU",
+                    QSystemTrayIcon.MessageIcon.Warning,
+                    2000,
+                )
             overlay_manager.set_status_detail(
                 f"Model: {config.settings.model_size} | GPU unavailable, loading on CPU"
             )
@@ -193,8 +212,14 @@ class RecordingMixin:
         else:
             overlay_manager.show_success("Ready")
         overlay_manager.set_hints("")
-        state_text = "Inserted" if injected else ("Not inserted" if config.settings.auto_paste else "Ready")
-        overlay_manager.set_status_detail(f"Model: {config.settings.model_size} | {state_text}")
+        state_text = (
+            "Inserted"
+            if injected
+            else ("Not inserted" if config.settings.auto_paste else "Ready")
+        )
+        overlay_manager.set_status_detail(
+            f"Model: {config.settings.model_size} | {state_text}"
+        )
         duration = result.duration or getattr(self, "_last_duration", 0.0)
         stats_parts = []
         if duration:

@@ -1,10 +1,12 @@
 """System tray setup and helpers."""
+
 from typing import Callable, Dict
 from PyQt6.QtGui import QIcon, QAction, QPainter, QPixmap, QColor, QPen
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QSystemTrayIcon, QMenu
 
-from ..config import APP_NAME, APP_VERSION, AVAILABLE_MODELS
+from ..config import APP_NAME, AVAILABLE_MODELS
+from ..meta import APP_VERSION
 
 
 class TrayController:
@@ -66,7 +68,9 @@ class TrayController:
         painter.setBrush(QColor(220, 50, 50))
         painter.setPen(Qt.PenStyle.NoPen)
         size = 14
-        painter.drawEllipse(pixmap.width() - size - 6, pixmap.height() - size - 6, size, size)
+        painter.drawEllipse(
+            pixmap.width() - size - 6, pixmap.height() - size - 6, size, size
+        )
         painter.end()
         return QIcon(pixmap)
 
@@ -110,7 +114,9 @@ class TrayController:
             action = QAction(device.upper(), device_menu)
             action.setCheckable(True)
             action.setChecked(device == self._current_device)
-            action.triggered.connect(lambda checked, d=device: self._on_device_select(d))
+            action.triggered.connect(
+                lambda checked, d=device: self._on_device_select(d)
+            )
             self._device_actions[device] = action
             device_menu.addAction(action)
 
@@ -140,7 +146,9 @@ class TrayController:
 
     def update_toggle_action(self, recording: bool):
         if self._toggle_action:
-            self._toggle_action.setText("Stop Recording" if recording else "Start Recording")
+            self._toggle_action.setText(
+                "Stop Recording" if recording else "Start Recording"
+            )
         self._apply_icon(recording)
 
     def set_recording_indicator(self, recording: bool):
@@ -156,6 +164,12 @@ class TrayController:
         for d, action in self._device_actions.items():
             action.setChecked(d == device)
 
-    def notify(self, title: str, message: str, icon=QSystemTrayIcon.MessageIcon.Information, timeout: int = 2000):
+    def notify(
+        self,
+        title: str,
+        message: str,
+        icon=QSystemTrayIcon.MessageIcon.Information,
+        timeout: int = 2000,
+    ):
         if self.tray:
             self.tray.showMessage(title, message, icon, timeout)

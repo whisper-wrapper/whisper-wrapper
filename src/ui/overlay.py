@@ -1,4 +1,5 @@
 """Overlay manager facade."""
+
 import os
 import subprocess
 from typing import Optional
@@ -8,6 +9,7 @@ from .overlay_state import OverlayState
 
 def _system_prefers_dark() -> bool:
     """Best-effort detection of dark preference on Linux desktops."""
+
     def _has_dark(text: str) -> bool:
         return "dark" in (text or "").lower()
 
@@ -76,10 +78,14 @@ class OverlayManager:
         if self._overlay:
             self._overlay.set_theme(self._resolved_theme)
 
-    def set_actions(self, on_copy=None, on_paste=None, on_hide=None, on_auto_paste_change=None):
+    def set_actions(
+        self, on_copy=None, on_paste=None, on_hide=None, on_auto_paste_change=None
+    ):
         self._actions = (on_copy, on_paste, on_hide, on_auto_paste_change, None)
         if self._overlay:
-            self._overlay.set_actions(on_copy, on_paste, on_hide, on_auto_paste_change, None)
+            self._overlay.set_actions(
+                on_copy, on_paste, on_hide, on_auto_paste_change, None
+            )
 
     def set_toggle_action(self, on_toggle=None):
         copy_cb, paste_cb, hide_cb, auto_cb, _ = self._actions
@@ -118,14 +124,22 @@ class OverlayManager:
         if self._overlay:
             self._overlay.set_text(text)
 
-    def show_downloading(self, progress: float = 0, model: str = "", status: str = "loading"):
+    def show_downloading(
+        self, progress: float = 0, model: str = "", status: str = "loading"
+    ):
         if self._overlay:
             if status == "downloading":
                 message = f"Downloading {model}..." if model else "Downloading model..."
             elif status == "loading_cached":
-                message = f"Loading cached {model}..." if model else "Loading cached model..."
+                message = (
+                    f"Loading cached {model}..." if model else "Loading cached model..."
+                )
             elif status == "fallback_cpu":
-                message = f"GPU unavailable, loading {model} on CPU..." if model else "GPU unavailable, loading on CPU..."
+                message = (
+                    f"GPU unavailable, loading {model} on CPU..."
+                    if model
+                    else "GPU unavailable, loading on CPU..."
+                )
             else:
                 message = f"Loading {model}..." if model else "Loading model..."
             self._overlay.set_state(OverlayState.DOWNLOADING, message=message)

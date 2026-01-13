@@ -1,10 +1,11 @@
 """Audio recording with VAD support and chunk callbacks."""
+
 import collections
 import threading
 import time
 from typing import Optional, Callable, List
 import numpy as np
-from ..config import SAMPLE_RATE, CHANNELS, PRE_BUFFER_MS, config
+from ..config import SAMPLE_RATE, PRE_BUFFER_MS, config
 from ..logging_utils import get_logger
 from .vad import VADProcessor
 from .devices import list_devices
@@ -24,7 +25,9 @@ class AudioRecorder:
         self._stream = None
         self._recording = False
         self._lock = threading.Lock()
-        self._pre_buffer: collections.deque = collections.deque(maxlen=PRE_BUFFER_FRAMES // VAD_FRAME_SAMPLES + 1)
+        self._pre_buffer: collections.deque = collections.deque(
+            maxlen=PRE_BUFFER_FRAMES // VAD_FRAME_SAMPLES + 1
+        )
         self._main_buffer: List[np.ndarray] = []
         self._vad: Optional[VADProcessor] = None
         self._silence_start: Optional[float] = None
@@ -53,6 +56,7 @@ class AudioRecorder:
         self._on_speech_start = on_speech_start
         self._on_silence_timeout = on_silence_timeout
         self._on_audio_chunk = on_audio_chunk
+
     def _audio_callback(self, indata, frames, time_info, status):
         if status:
             logger.warning(f"Audio status: {status}")
@@ -120,7 +124,11 @@ class AudioRecorder:
             elif self._speech_detected:
                 if self._silence_start_nonvad is None:
                     self._silence_start_nonvad = current_time
-                elif (current_time - self._silence_start_nonvad) >= config.settings.vad_silence_timeout and not self._timeout_triggered:
+                elif (
+                    (current_time - self._silence_start_nonvad)
+                    >= config.settings.vad_silence_timeout
+                    and not self._timeout_triggered
+                ):
                     self._timeout_triggered = True
                     if self._on_silence_timeout:
                         self._on_silence_timeout()
@@ -132,12 +140,16 @@ class AudioRecorder:
             total_samples = sum(len(buf) for buf in self._main_buffer)
             max_samples = SAMPLE_RATE * config.settings.max_recording_sec
             if total_samples >= max_samples:
-                logger.warning(f"Max recording duration ({config.settings.max_recording_sec}s) reached")
+                logger.warning(
+                    f"Max recording duration ({config.settings.max_recording_sec}s) reached"
+                )
                 self._timeout_triggered = True
                 if self._on_silence_timeout:
                     self._on_silence_timeout()
         if self._speech_detected and not self._timeout_triggered:
-            if (current_time - self._last_activity_time) >= config.settings.vad_silence_timeout:
+            if (
+                current_time - self._last_activity_time
+            ) >= config.settings.vad_silence_timeout:
                 self._timeout_triggered = True
                 if self._on_silence_timeout:
                     self._on_silence_timeout()
@@ -169,7 +181,11 @@ class AudioRecorder:
             self._last_chunk_time = 0
             self._last_chunk_index = 0
             self._last_activity_time = 0
-            self._vad = VADProcessor(config.settings.vad_threshold) if config.settings.vad_enabled else None
+            self._vad = (
+                VADProcessor(config.settings.vad_threshold)
+                if config.settings.vad_enabled
+                else None
+            )
 
             resolved_device = device
             if resolved_device is None and config.settings.microphone:
@@ -219,7 +235,9 @@ class AudioRecorder:
                 return audio
             if self._pre_buffer:
                 audio = np.concatenate(list(self._pre_buffer))
-                logger.info(f"Recording stopped (pre-buffer only): {len(audio)/SAMPLE_RATE:.2f}s")
+                logger.info(
+                    f"Recording stopped (pre-buffer only): {len(audio)/SAMPLE_RATE:.2f}s"
+                )
                 return audio
 
             logger.warning("No audio recorded")

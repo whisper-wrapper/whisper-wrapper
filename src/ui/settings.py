@@ -64,7 +64,7 @@ class SettingsDialog(QDialog):
         self._microphone = QComboBox()
         self._microphone.addItem("Default", None)
         for dev in list_devices():
-            self._microphone.addItem(dev['name'], dev['name'])
+            self._microphone.addItem(dev["name"], dev["name"])
         audio_layout.addRow("Microphone:", self._microphone)
 
         self._vad_enabled = QCheckBox("Enable Voice Activity Detection")
@@ -108,10 +108,18 @@ class SettingsDialog(QDialog):
         self._language = QComboBox()
         self._language.addItem("Auto-detect", None)
         languages = [
-            ("en", "English"), ("ru", "Russian"), ("de", "German"),
-            ("fr", "French"), ("es", "Spanish"), ("it", "Italian"),
-            ("pt", "Portuguese"), ("pl", "Polish"), ("uk", "Ukrainian"),
-            ("ja", "Japanese"), ("ko", "Korean"), ("zh", "Chinese"),
+            ("en", "English"),
+            ("ru", "Russian"),
+            ("de", "German"),
+            ("fr", "French"),
+            ("es", "Spanish"),
+            ("it", "Italian"),
+            ("pt", "Portuguese"),
+            ("pl", "Polish"),
+            ("uk", "Ukrainian"),
+            ("ja", "Japanese"),
+            ("ko", "Korean"),
+            ("zh", "Chinese"),
         ]
         for code, name in languages:
             self._language.addItem(name, code)
@@ -128,26 +136,39 @@ class SettingsDialog(QDialog):
         self._overlay_opacity = QSlider(Qt.Orientation.Horizontal)
         self._overlay_opacity.setRange(10, 100)
         self._overlay_opacity_label = QLabel()
-        self._overlay_opacity.valueChanged.connect(lambda v: self._overlay_opacity_label.setText(f"{v}%"))
+        self._overlay_opacity.valueChanged.connect(
+            lambda v: self._overlay_opacity_label.setText(f"{v}%")
+        )
         opacity_row = QHBoxLayout()
         opacity_row.addWidget(self._overlay_opacity)
         opacity_row.addWidget(self._overlay_opacity_label)
         model_layout.addRow("Overlay opacity:", opacity_row)
 
-        self._cache_status = QLabel(); self._cache_status.setStyleSheet("color: #888;")
+        self._cache_status = QLabel()
+        self._cache_status.setStyleSheet("color: #888;")
         model_layout.addRow("Cache:", self._cache_status)
 
         cache_buttons = QHBoxLayout()
-        self._download_model_btn = QPushButton("Download/Update"); self._download_model_btn.clicked.connect(self._download_selected_model); cache_buttons.addWidget(self._download_model_btn)
-        self._clear_cache_btn = QPushButton("Delete Cache"); self._clear_cache_btn.clicked.connect(self._clear_selected_cache); cache_buttons.addWidget(self._clear_cache_btn)
+        self._download_model_btn = QPushButton("Download/Update")
+        self._download_model_btn.clicked.connect(self._download_selected_model)
+        cache_buttons.addWidget(self._download_model_btn)
+        self._clear_cache_btn = QPushButton("Delete Cache")
+        self._clear_cache_btn.clicked.connect(self._clear_selected_cache)
+        cache_buttons.addWidget(self._clear_cache_btn)
         model_layout.addRow("", cache_buttons)
         self._model.currentIndexChanged.connect(lambda _: self._update_cache_status())
 
         layout.addWidget(model_group)
 
-        button_layout = QHBoxLayout(); button_layout.addStretch()
-        cancel_btn = QPushButton("Cancel"); cancel_btn.clicked.connect(self.reject); button_layout.addWidget(cancel_btn)
-        save_btn = QPushButton("Save"); save_btn.setDefault(True); save_btn.clicked.connect(self._save_settings); button_layout.addWidget(save_btn)
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.clicked.connect(self.reject)
+        button_layout.addWidget(cancel_btn)
+        save_btn = QPushButton("Save")
+        save_btn.setDefault(True)
+        save_btn.clicked.connect(self._save_settings)
+        button_layout.addWidget(save_btn)
         layout.addLayout(button_layout)
 
     def _load_settings(self):
@@ -199,7 +220,11 @@ class SettingsDialog(QDialog):
             logger.info("Settings saved")
             self.accept()
 
-            QMessageBox.information(self, "Settings Saved", "Settings saved. Some changes may require restart.")
+            QMessageBox.information(
+                self,
+                "Settings Saved",
+                "Settings saved. Some changes may require restart.",
+            )
 
         except Exception as e:
             logger.error(f"Failed to save settings: {e}")
@@ -225,7 +250,9 @@ class SettingsDialog(QDialog):
             progress.setValue(int(percent))
             QApplication.processEvents()
 
-        success = transcriber.load_model(model_name=model, progress_callback=on_progress, force_reload=True)
+        success = transcriber.load_model(
+            model_name=model, progress_callback=on_progress, force_reload=True
+        )
         progress.close()
         if success:
             self._update_cache_status()

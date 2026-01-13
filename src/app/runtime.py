@@ -8,11 +8,18 @@ from PyQt6.QtCore import pyqtSignal, QObject
 from PyQt6.QtNetwork import QLocalSocket
 from PyQt6.QtWidgets import QApplication
 
-from ..config import APP_NAME, APP_VERSION, LOCK_FILE, IPC_SOCKET_NAME, config, get_display_server, is_wayland
+from ..config import (
+    APP_NAME,
+    LOCK_FILE,
+    IPC_SOCKET_NAME,
+    config,
+    get_display_server,
+    is_wayland,
+)
+from ..meta import APP_VERSION
 from ..hotkeys import hotkey_manager
 from ..ipc_server import IpcServer
 from ..logging_utils import setup_logging, get_logger
-from ..model import transcriber
 from ..system import acquire_lock, release_lock
 from ..ui import overlay_manager, TrayController
 from .recording import RecordingMixin
@@ -169,6 +176,7 @@ class WhisperApp(QObject, RecordingMixin, UiActionsMixin):
     def _copy_last_result(self):
         try:
             import pyperclip
+
             if overlay_manager.overlay and overlay_manager.overlay._text_view:
                 text = overlay_manager.overlay._text_view.toPlainText()
                 if text:
@@ -182,6 +190,7 @@ class WhisperApp(QObject, RecordingMixin, UiActionsMixin):
         if overlay_manager.overlay and overlay_manager.overlay._text_view:
             text = overlay_manager.overlay._text_view.toPlainText()
             from ..injector import injector
+
             success, msg = injector.inject(text)
             if success and msg:
                 overlay_manager.show_success(msg)

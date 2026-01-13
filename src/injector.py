@@ -42,7 +42,7 @@ class TextInjector:
             result = subprocess.run(
                 ["xdotool", "type", "--clearmodifiers", "--delay", "0", "--", text],
                 capture_output=True,
-                timeout=10
+                timeout=10,
             )
             if result.returncode != 0:
                 logger.error(f"xdotool error: {result.stderr.decode()}")
@@ -59,8 +59,7 @@ class TextInjector:
         try:
             # Save to clipboard using xclip
             proc = subprocess.Popen(
-                ["xclip", "-selection", "clipboard", "-i"],
-                stdin=subprocess.PIPE
+                ["xclip", "-selection", "clipboard", "-i"], stdin=subprocess.PIPE
             )
             proc.communicate(input=text.encode("utf-8"), timeout=2)
 
@@ -75,7 +74,7 @@ class TextInjector:
             result = subprocess.run(
                 ["xdotool", "key", "--clearmodifiers", "ctrl+v"],
                 capture_output=True,
-                timeout=2
+                timeout=2,
             )
 
             if result.returncode != 0:
@@ -91,9 +90,7 @@ class TextInjector:
     def _inject_wtype(self, text: str) -> bool:
         try:
             result = subprocess.run(
-                ["wtype", "--", text],
-                capture_output=True,
-                timeout=10
+                ["wtype", "--", text], capture_output=True, timeout=10
             )
             if result.returncode != 0:
                 logger.error(f"wtype error: {result.stderr.decode()}")
@@ -109,9 +106,7 @@ class TextInjector:
     def _inject_ydotool(self, text: str) -> bool:
         try:
             result = subprocess.run(
-                ["ydotool", "type", "--", text],
-                capture_output=True,
-                timeout=10
+                ["ydotool", "type", "--", text], capture_output=True, timeout=10
             )
             return result.returncode == 0
         except subprocess.TimeoutExpired:
@@ -124,10 +119,7 @@ class TextInjector:
     def _inject_wl_copy(self, text: str) -> bool:
         try:
             # Copy to clipboard
-            proc = subprocess.Popen(
-                ["wl-copy"],
-                stdin=subprocess.PIPE
-            )
+            proc = subprocess.Popen(["wl-copy"], stdin=subprocess.PIPE)
             proc.communicate(input=text.encode("utf-8"), timeout=2)
 
             if proc.returncode != 0:
@@ -140,14 +132,14 @@ class TextInjector:
                 result = subprocess.run(
                     ["wtype", "-M", "ctrl", "v", "-m", "ctrl"],
                     capture_output=True,
-                    timeout=2
+                    timeout=2,
                 )
                 return result.returncode == 0
             elif shutil.which("ydotool"):
                 result = subprocess.run(
                     ["ydotool", "key", "29:1", "47:1", "47:0", "29:0"],  # Ctrl+V
                     capture_output=True,
-                    timeout=2
+                    timeout=2,
                 )
                 return result.returncode == 0
 
@@ -160,6 +152,7 @@ class TextInjector:
     def _inject_clipboard(self, text: str) -> Tuple[bool, str]:
         try:
             import pyperclip
+
             pyperclip.copy(text)
             msg = "Text copied to clipboard (Ctrl+V to paste)"
             logger.info(msg)
@@ -221,10 +214,7 @@ def check_tools() -> dict:
     # Check if ydotool daemon is running
     if tools["ydotool"]:
         try:
-            result = subprocess.run(
-                ["pgrep", "-x", "ydotoold"],
-                capture_output=True
-            )
+            result = subprocess.run(["pgrep", "-x", "ydotoold"], capture_output=True)
             tools["ydotoold_running"] = result.returncode == 0
         except Exception:
             tools["ydotoold_running"] = False

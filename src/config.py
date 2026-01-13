@@ -2,12 +2,12 @@
 
 import json
 import os
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Optional
 
 # Application constants (single source of truth in meta.py)
-from .meta import APP_NAME, APP_VERSION
+from .meta import APP_NAME
 
 # Paths
 CONFIG_DIR = Path.home() / ".config" / APP_NAME
@@ -30,6 +30,7 @@ AVAILABLE_MODELS = ["tiny", "base", "small", "medium", "large-v3"]
 DEFAULT_HOTKEY_TOGGLE = "<ctrl>+<alt>+r"
 DEFAULT_HOTKEY_CANCEL = "escape"
 OVERLAY_THEMES = ("auto", "dark", "light")
+
 
 @dataclass
 class Settings:
@@ -92,10 +93,13 @@ class ConfigManager:
             try:
                 with open(CONFIG_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                settings = Settings(**{
-                    k: v for k, v in data.items()
-                    if k in Settings.__dataclass_fields__
-                })
+                settings = Settings(
+                    **{
+                        k: v
+                        for k, v in data.items()
+                        if k in Settings.__dataclass_fields__
+                    }
+                )
                 settings.validate()
                 return settings
             except (json.JSONDecodeError, TypeError):
