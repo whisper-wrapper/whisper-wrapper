@@ -25,6 +25,10 @@ dependencies = [
   "pynput>=1.8.1,<2.0",
   "pyperclip>=1.11.0,<2.0",
   "webrtcvad>=2.0.10",
+]
+
+[project.optional-dependencies]
+cuda = [
   "nvidia-cudnn-cu12>=9.0",
   "nvidia-cublas-cu12>=12.0",
 ]
